@@ -8,5 +8,5 @@ bib: tex
 	pdflatex extlang.tex
 
 clean:
-	rm *.aux *.bbl *.blg *.log *.pdf *.toc
+	rm *.aux *.bbl *.blg *.log *.pdf *.toc tmp -R
 

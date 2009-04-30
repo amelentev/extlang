@@ -1,0 +1,196 @@
+% this is just utf8 version of usu1251.sty
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             File usu1.sty                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% usu1.sty -- 13 Oct 2003
+%
+% Adapted from standard article.sty + art10.sty files by M. V. Volkov
+%
+% Этот файл содержит модификации некоторых команд из стандарных файлов
+% для автоматического приведения статей на русском языке к виду,
+% утвержденному редакционной коллегией журнала "Известия Уральского
+% университета. Математика и Механика". Он также содержит несколько
+% макроопределений, полезных при подготовке математических текстов.
+% При затруднениях пишите по адресу Mikhail.Volkov@usu.ru
+
+\typeout{Стилевой файл журнала "Известия Уральского университета.}
+\typeout{Математика и Механика" для статей на русском языке.}
+\typeout{Version of <13 Oct 2003>}
+
+% Совместимость с более ранними версиями LaTeX
+
+\def\reset@font{}
+\def\p@LaTeX{{\reset@font\rm L\kern-.36em\raise.3ex\hbox{\sc a}\kern-.15em%
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\def\LaTeX{\protect\p@LaTeX}
+
+% Размеры
+
+\baselineskip=14pt
+
+\oddsidemargin=.25in
+\evensidemargin=.25in
+
+\textwidth=13.5 true cm
+\textheight=19.2 true cm
+\footskip=0.7 true cm
+\headsep=0.5 true cm
+\headheight=0.4 true cm
+
+% Русификация
+
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[english,russian]{babel}
+
+% Определения
+
+\def\newrefname{Литература}
+\def\abstractname{Аннотация}
+\def\UDK{\date}
+
+% Модификации стандартных определений
+
+\def\@maketitle{\newpage
+\vskip 4 true cm
+\noindent\@date\par%
+\begin{flushright}
+{\bf\@author}\par%
+\end{flushright}
+%\vskip 1em
+\begin{flushright}
+{\bf\@title}
+\end{flushright}}
+
+\def\section{\@startsection {section}{1}{\z@}{-0.6cm plus-1ex minus
+    -.2ex}{0.4cm plus.2ex}{\reset@font\bf}}
+
+\def\subsection{\@startsection{subsection}{2}{\z@}{-0.4cm plus-1ex
+    minus-.2ex}{0.5mm plus.2ex}{\reset@font\it}}
+\def\subsubsection{\@startsection{subsubsection}{3}{\z@}{-0.4cm plus
+ -1ex minus-.2ex}{0.5mm plus.2ex}{\reset@font\it}}
+
+\def\@sect#1#2#3#4#5#6[#7]#8{\ifnum #2>\c@secnumdepth
+     \let\@svsec\@empty\else
+     \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname.\hskip .6em}\fi
+    \@tempskipa #5\relax
+      \ifdim \@tempskipa>\z@
+        \begingroup #6\relax
+          \@hangfrom{\hskip #3\relax\@svsec}{\interlinepenalty \@M #8\par}%
+        \endgroup
+       \csname #1mark\endcsname{#7}\addcontentsline
+         {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                      \protect\numberline{\csname the#1\endcsname}\fi
+                    #7}\else
+        \def\@svsechd{#6\hskip #3\relax  %% \relax added 2 May 90
+                   \@svsec #8\csname #1mark\endcsname
+                      {#7}\addcontentsline
+                           {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                             \protect\numberline{\csname the#1\endcsname}\fi
+                       #7}}\fi
+     \@xsect{#5}}
+
+\def\@afterheading{\global\@nobreaktrue
+      \everypar{\if@nobreak
+                   \global\@nobreakfalse
+                   \clubpenalty \@M
+                 \else \clubpenalty \@clubpenalty
+                    \everypar{}\fi}}
+
+\long\def\@caption#1[#2]#3{\par\addcontentsline{\csname
+  ext@#1\endcsname}{#1}{\protect\numberline{\csname
+  the#1\endcsname}{\ignorespaces #2}}\begingroup
+    \@parboxrestore
+    \small\baselineskip=12pt
+    \@makecaption{\csname fnum@#1\endcsname.}{\ignorespaces #3}\par
+  \endgroup}
+
+\def\thebibliography#1{\small\section*{\newrefname\@mkboth
+  {\uppercase{\newrefname}}{\uppercase{\newrefname}}}\list
+  {\@biblabel{\arabic{enumi}}}{\settowidth\labelwidth{\@biblabel{#1}}%
+    \leftmargin\labelwidth
+    \advance\leftmargin\labelsep
+    \usecounter{enumi}%
+    \let\p@enumi\@empty
+    \def\theenumi{\arabic{enumi}}}%
+    \def\newblock{\hskip .11em plus.33em minus.07em}%
+    \sloppy\clubpenalty4000\widowpenalty4000
+    \sfcode`\.=1000\relax
+    \frenchspacing}
+
+\def\@biblabel#1{#1.}
+
+\def\@begintheorem#1#2{\it \trivlist \item[\hskip
+\labelsep{{\bf #1\ #2.}}]}
+\def\@opargbegintheorem#1#2#3{\it \trivlist
+      \item[\hskip \labelsep{{\bf #1\ #2}\ {\rm#3}.}]}
+
+\def\@evenhead{\raisebox{0pt}[\headheight][0pt]{%
+\vbox{\hbox to \textwidth{\leftmark\strut}\hrule}}}
+\def\@oddhead{\raisebox{0pt}[\headheight][0pt]{%
+\vbox{\hbox to \textwidth{\rightmark\strut}\hrule}}}
+\def\@oddfoot{\hfill\small\textup{\thepage}}
+\def\@evenfoot{\small\textup{\thepage}\hfill}
+\def\thefootnote{\fnsymbol{footnote}}
+
+\def\ps@firstpage{%
+    \def\@oddfoot{\hfill\small\textup{\thepage}}
+    \def\@evenfoot{\small\textup{\thepage}\hfill}
+    \let\@evenhead\@empty\let\@oddhead\@empty%
+    }
+
+% Команды и окружения для математики
+
+\newtheorem{Thm}{Теорема}[section]
+\newtheorem{Prop}{Предложение}[section]
+\newtheorem{Lemma}{Лемма}[section]
+\newtheorem{Defin}{Определение}[section]
+\newtheorem{Rmk}{Замечание}[section]
+\newtheorem{Cor}{Следствие}[section]
+\newtheorem{Example}{Пример}[section]
+\newtheorem{Conjecture}{Гипотеза}[section]
+\newtheorem{Probl}{Проблема}[section]
+\newtheorem{Problem}{Задача}[section]
+\newtheorem{Condition}{Условие}[section]
+\newtheorem{Question}{Вопрос}[section]
+
+\newtheorem{thm}{Теорема}
+\newtheorem{prop}{Предложение}
+\newtheorem{lemma}{Лемма}
+\newtheorem{defin}{Определение}
+\newtheorem{rmk}{Замечание}
+\newtheorem{cor}{Следствие}
+\newtheorem{example}{Пример}
+\newtheorem{conjecture}{Гипотеза}
+\newtheorem{probl}{Проблема}
+\newtheorem{problem}{Задача}
+\newtheorem{condition}{Условие}
+\newtheorem{question}{Вопрос}
+
+\newcommand{\qed}{\hfill\rule{1ex}{1ex}}
+\newcommand{\qeddis}{\eqno{\rule{1ex}{1ex}}}
+
+%\newenvironment{proof}{\rm \trivlist \item[\hskip \labelsep{\bf
+%Доказательство.}]}{\qed\endtrivlist}
+
+\newenvironment{proof1}{\rm \trivlist\item[\hskip\labelsep{\bf
+Доказательство}]}{\qed\endtrivlist}
+
+\newenvironment{proof2}{\rm \trivlist\item[\hskip\labelsep{\bf
+Доказательство.}]}{\endtrivlist}
+
+\newenvironment{proof3}{\rm \trivlist\item[\hskip\labelsep{\bf
+Доказательство}]}{\endtrivlist}
+
+% Длинные подписи
+\long\def\@makecaption#1#2{%
+   \vskip 10\p@
+   \setbox\@tempboxa\hbox{#1 #2}%
+   \ifdim \wd\@tempboxa >\hsize  % IF longer than one line:
+       #1 #2\par                 %   THEN set as ordinary paragraph.
+     \else                       %   ELSE  center.
+       \hbox to\hsize{\hfil\box\@tempboxa\hfil}%
+   \fi}
+
+\endinput
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

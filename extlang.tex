@@ -1202,7 +1202,34 @@ LPG ранее известен как JikesPG. Используется в эк
 которые доказали полезность при исследовании большого числа вычислительных
 задач.
 
-TODO: примеры на Haskell, Scala, Nemerle
+Приведем пример распознавания простого DSL используя parser combinators.
+DSL выглядит примерно так:
+\begin{verbatim} 
+(buy 100 IBM shares at max USD 45,
+ sell 50 CISCO shares at min USD 25,
+ buy 100 Google shares at max USD 800
+ ) for trading_account "SSS1234")
+\end{verbatim}
+Описание DSL на языке Scala с помощью parser combinators:
+\begin{verbatim} 
+import scala.util.parsing.combinator.syntactical._
+object OrderDSL extends StandardTokenParsers {
+  lexical.delimiters ++= List("(", ")", ",")
+  lexical.reserved += ("buy", "sell", "shares", "at", 
+    "max", "min", "for", "trading", "account")
+  def instr = trans ~ account_spec
+  def trans = "(" ~> repsep(trans_spec, ",") <~ ")"
+  def trans_spec = buy_sell ~ buy_sell_instr
+  def account_spec = "for" ~> "trading" ~> "account" ~> stringLit
+  def buy_sell = ("buy" | "sell")
+  def buy_sell_instr = security_spec ~ price_spec
+  def security_spec = numericLit ~ ident ~ "shares"
+  def price_spec = "at" ~ ("min" | "max") ~ numericLit
+}
+\end{verbatim}
+Как видно, в классе просто описана грамматика DSL в форме, похожей на
+стандартную EBNF. По этому классу далее строится парсер, распознающий данный
+DSL.
 
 \subsection{Адаптивные грамматики}
 \label{adaptive}

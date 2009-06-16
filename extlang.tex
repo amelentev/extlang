@@ -883,8 +883,9 @@ Boo --- объектно ориентированный статически т�
 У~языка Boo схожий с Python синтаксис. Также Boo специально ориентирован на
 расширяемость языка и компилятора. Как и в Nemerle, язык Boo позволяет
 определять синтаксические макросы, рекурсивно разворачивающиеся в базовые
-конструкции языка путем манипуляций с синтаксическим деревом. Макросы, как и в
-Java Syntactic Extender, представляются просто объектом языка. Когда при
+конструкции языка путем манипуляций с синтаксическим деревом. Макросы могут
+быть записаны просто в виде объекта языка, как в Java Syntactic Extender, или с
+помощью специальных синтаксических конструкций, как в Nemerle. Когда при
 синтаксическом разборе встречается неизвестная синтаксическая структура, парсер
 Boo проверяет, является ли она макросом, и если является, вызывает
 соответствующие методы у класса макроса.
@@ -900,36 +901,19 @@ fooInstanceWithReallyLongName.DoSomething()
 такой компактный код:
 \begin{verbatim}
 with fooInstanceWithReallyLongName:
-    _f1 = 100
-    _f2 = "abc"
-    _DoSomething()
+    .f1 = 100
+    .f2 = "abc"
+    .DoSomething()
 \end{verbatim}
-
 Определение макроса ``with'' на Boo
 \begin{verbatim}
-import Boo.Lang.Compiler
-import Boo.Lang.Compiler.Ast
-import Boo.Lang.Compiler.Ast.Visitors
-
-class WithMacro(AbstractAstMacro):
-    private class NameExpander(DepthFirstTransformer):
-        _inst as ReferenceExpression
-        def constructor(inst as ReferenceExpression):
-            _inst = inst
-        override def OnReferenceExpression(node as ReferenceExpression):
-            if node.Name.StartsWith('_'):
-                mre = MemberReferenceExpression(node.LexicalInfo)
-                mre.Name = node.Name[1:]
-                mre.Target = _inst.CloneNode()
-                ReplaceCurrentNode(mre)
-    override def Expand(macro as MacroStatement) as Statement:
-        assert 1 == macro.Arguments.Count
-        assert macro.Arguments[0] isa ReferenceExpression
-        inst = macro.Arguments[0] as ReferenceExpression
-        block = macro.Block
-        ne = NameExpander(inst)
-        ne.Visit(block)
-        return block
+macro with(target, body as Expression*):
+ for expression in body:
+  match expression:
+   case BinaryExpression(Left: mre = MemberReferenceExpression(Target: \ 
+      OmittedExpression())):
+    mre.Target = target
+    yield
 \end{verbatim}
 
 \subsubsection*{Язык Nemerle}
@@ -977,6 +961,11 @@ Python. Т.е. вместо использования скобок для об�
 использовать символ табуляции для их оформления (т.е. так называемая
 ``лесенка'' задает структуру, а не наоборот). Это можно рассматривать как
 пример расширения лексера в Nemerle.
+
+Язык Boo довольно близок по возможностям к Nemerle. Из различий можно выделить
+б\'{о}льшую концентрацию языка Nemerle на макросы его научную базу
+(по языку Nemerle было написано много научных работ). Но язык Boo, судя по
+последним выпускам, более активно развивается в последнее время.
 
 \subsubsection*{Язык Scala}
 Scala — это, подобно Nemerle, гибридный язык программирования, спроектированный

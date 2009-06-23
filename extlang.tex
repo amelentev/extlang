@@ -691,6 +691,24 @@ Syntactic Extender, которая будет рассмотрена в разд
   \cite{termware}.
 \end{itemize}
 
+Приведем простой пример использования системы трансформации TermWare для
+поиска игнорирования исключений (конструкций вида try \{\} catch \{\}, т.е. с
+пустым блоком catch) в программах на языке Java.
+\begin{verbatim}
+domain(examples,
+ system(JECheck, javaFacts(JECheckDB, "ua.kiev.gradsoft.TermWareDemos.jsa.JECheckFacts"),
+  ruleset(
+   Catch($formalParameter, Block([]))->PROBLEM
+                           [found("empty cath statement")]
+  ),
+  BottomUp
+ )
+);
+\end{verbatim}
+В примере сначала подключается набор фактов для языка Java. Затем идет описание
+правил: для каждого блока catch с пустым телом генерируется диагностическое
+сообщение.  
+
 \subsection{Синтаксические расширения}
 Как уже было сказано, синтаксическое расширение добавляет в язык новые
 синтаксические конструкции и связывает с ними какую-либо семантику.
